@@ -1,0 +1,43 @@
+import requests
+
+def fetch_json_data(api_url):
+    response = requests.get(api_url)
+
+    # Check if the request was successful (status code 200)
+    if response.status_code == 200:
+        return response.json()
+    else:
+        # Handle error cases
+        print(f"Error: {response.status_code}")
+        return None
+
+def parse_and_display_json(json_data):
+    # Access the desired information from the JSON response
+    items = json_data.get("collection", {}).get("items", [])
+
+    item_count = 0
+    for item in items:
+
+        links = item.get("links", [])
+
+        for link in links:
+            if link.get("render") == "image":
+                href = link.get("href", "")
+                print(f"URL: {href}")
+    
+        item_count = item_count + 1
+
+        if item_count >= 5:
+            break
+
+
+if __name__ == "__main__":
+    # URL of the NASA API
+    api_url = "https://images-api.nasa.gov/search?year_start=2018&year_end=2018&q=mars"
+
+    # Fetch JSON data from the API
+    json_data = fetch_json_data(api_url)
+
+    if json_data is not None:
+        # Parse and display the JSON data
+        parse_and_display_json(json_data)
